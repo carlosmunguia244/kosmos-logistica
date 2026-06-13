@@ -6,105 +6,327 @@
 </head>
 <body>
     <h1>Panel de Control - Administrador</h1>
+    <p>Usuario Activo: <strong id="nombreAdminUI"></strong></p>
     <button id="btnSalir">Cerrar Sesión</button>
-    
-    <h3 id="tituloFormulario">Registrar Nuevo Chofer</h3>
-    <form id="formChofer">
-        <input type="text" id="nombreChofer" placeholder="Nombre completo" required>
-        <input type="text" id="licenciaChofer" placeholder="Licencia" required>
-        <button type="submit" id="btnGuardar">Guardar Chofer</button>
-    </form>
 
-    <h3>Lista de Choferes Activos</h3>
-    <ul id="listaChoferes"></ul>
+    <nav>
+        <button onclick="cambiarPestaña('modulo-choferes')">Gestionar Choferes</button>
+        <button onclick="cambiarPestaña('modulo-vehiculos')">Gestionar Vehículos</button>
+        <button onclick="cambiarPestaña('modulo-viajes')">Despacho de Viajes</button>
+    </nav>
+
+    <br><hr><br>
+
+    <div id="modulo-choferes" class="seccion-modulo">
+        <h3 id="tituloFormChofer">Registrar Nuevo Chofer</h3>
+        <form id="formChofer">
+            <input type="text" id="nombreChofer" placeholder="Nombre completo" required>
+            <input type="text" id="licenciaChofer" placeholder="Licencia" required>
+            <select id="estatusChofer" style="display: none;">
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="De vacaciones">De vacaciones</option>
+                <option value="Incapacitado">Incapacitado</option>
+                <option value="Suspendido">Suspendido</option>
+                <option value="Disponible">Disponible</option>
+                <option value="En ruta">En ruta</option>
+            </select>
+            <button type="submit" id="btnGuardarChofer">Guardar Chofer</button>
+        </form>
+        <h3>Lista de Choferes</h3>
+        <ul id="listaChoferes"></ul>
+    </div>
+
+    <div id="modulo-vehiculos" class="seccion-modulo" style="display: none;">
+        <h3 id="tituloFormVehiculo">Registrar Nuevo Vehículo</h3>
+        <form id="formVehiculo">
+            <input type="text" id="placaVehiculo" placeholder="Placa (ej: ABC-123)" required>
+            <input type="text" id="modeloVehiculo" placeholder="Modelo (ej: Nissan NP300)" required>
+            <input type="number" id="anioVehiculo" placeholder="Año (ej: 2024)" required min="1990" max="2030">
+            <input type="number" id="capacidadVehiculo" placeholder="Capacidad en kg" required>
+            <select id="estatusVehiculo" style="display: none;">
+                <option value="Disponible">Disponible</option>
+                <option value="Asignado">Asignado</option>
+                <option value="En ruta">En ruta</option>
+                <option value="En mantenimiento preventivo">En mantenimiento preventivo</option>
+                <option value="En mantenimiento correctivo">En mantenimiento correctivo</option>
+                <option value="Fuera de servicio">Fuera de servicio</option>
+                <option value="En inspección">En inspección</option>
+            </select>
+            <button type="submit" id="btnGuardarVehiculo">Guardar Vehículo</button>
+        </form>
+        <h3>Flota de Vehículos</h3>
+        <ul id="listaVehiculos"></ul>
+    </div>
+
+    <div id="modulo-viajes" class="seccion-modulo" style="display: none;">
+        <h3 id="tituloFormViaje">Programar Nuevo Viaje</h3>
+        <form id="formViaje">
+            <select id="selectChofer" required><option value="">-- Selecciona Chofer --</option></select>
+            <select id="selectVehiculo" required><option value="">-- Selecciona Vehículo --</option></select>
+
+            <input type="text" id="origenViaje" list="sugerenciasOrigen" placeholder="Origen..." required autocomplete="off">
+            <datalist id="sugerenciasOrigen"></datalist>
+
+            <input type="text" id="destinoViaje" list="sugerenciasDestino" placeholder="Destino..." required autocomplete="off">
+            <datalist id="sugerenciasDestino"></datalist>
+
+            <select id="selectEstatus" style="display: none;">
+                <option value="Programado">Programado</option>
+                <option value="Pendiente de salida">Pendiente de salida</option>
+                <option value="En carga">En carga</option>
+                <option value="En tránsito">En tránsito</option>
+                <option value="En entrega">En entrega</option>
+                <option value="Completado">Completado</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Retrasado">Retrasado</option>
+            </select>
+
+            <button type="submit" id="btnGuardarViaje">Asignar Viaje</button>
+        </form>
+        <h3>Bitácora de Viajes</h3>
+        <ul id="listaViajes"></ul>
+    </div>
 
     <script>
-        // 1. PROTECCIÓN DE RUTA FRONTEND
-        if (localStorage.getItem('rol') !== 'admin') {
-            window.location.href = '/login.html';
-        }
+        if (localStorage.getItem('rol') !== 'admin') window.location.href = '/login.html';
+        
+        // Mostrar nombre del admin logueado
+        document.getElementById('nombreAdminUI').innerText = localStorage.getItem('usuario') || 'Administrador';
 
         const API_CHOFERES = '/api/choferes';
-        let editId = null;
+        const API_VEHICULOS = '/api/vehiculos';
+        const API_VIAJES = '/api/viajes';
 
-        // Cerrar sesión
+        let editChoferId = null;
+        let editVehiculoId = null;
+        let editViajeId = null;
+
+        function cambiarPestaña(idModulo) {
+            document.querySelectorAll('.seccion-modulo').forEach(div => div.style.display = 'none');
+            document.getElementById(idModulo).style.display = 'block';
+            if (idModulo === 'modulo-choferes') cargarChoferes();
+            if (idModulo === 'modulo-vehiculos') cargarVehiculos();
+            if (idModulo === 'modulo-viajes') cargarModuloViajes();
+        }
+
         document.getElementById('btnSalir').onclick = () => {
-            localStorage.clear(); // Borra los datos guardados
+            localStorage.clear();
             window.location.href = '/login.html';
         };
 
-        // --- AQUÍ VA EXACTAMENTE LA MISMA LÓGICA CRUD QUE YA TENÍAMOS ---
+        // ==================== CHOFERES ====================
         async function cargarChoferes() {
-            const res = await fetch(API_CHOFERES);
-            const data = await res.json();
-            const lista = document.getElementById('listaChoferes');
-            lista.innerHTML = data.map(c => `
-                <li>
-                    ${c.nombre} - Licencia: ${c.licencia} 
-                    <button onclick="prepararEditar(${c.id}, '${c.nombre}', '${c.licencia}')">Editar</button>
+            const data = await (await fetch(API_CHOFERES)).json();
+            document.getElementById('listaChoferes').innerHTML = data.map(c => `
+                <li>${c.nombre} (${c.licencia}) - 🏷️ ${c.estatus}
+                    <button onclick="prepararEditarChofer(${c.id}, '${c.nombre}', '${c.licencia}', '${c.estatus}')">Editar</button>
                     <button onclick="eliminarChofer(${c.id})">Eliminar</button>
-                </li>
-            `).join('');
+                </li>`).join('');
         }
 
-        window.prepararEditar = (id, nombre, licencia) => {
-            editId = id;
-            document.getElementById('tituloFormulario').innerText = 'Modificar Datos del Chofer';
+        window.prepararEditarChofer = (id, nombre, licencia, estatus) => {
+            editChoferId = id;
+            document.getElementById('tituloFormChofer').innerText = 'Modificar Chofer';
             document.getElementById('nombreChofer').value = nombre;
             document.getElementById('licenciaChofer').value = licencia;
-            document.getElementById('btnGuardar').innerText = 'Actualizar Chofer';
-
-            if (!document.getElementById('btnCancelar')) {
-                const btnCancelar = document.createElement('button');
-                btnCancelar.id = 'btnCancelar';
-                btnCancelar.type = 'button';
-                btnCancelar.innerText = 'Cancelar Edición';
-                btnCancelar.onclick = limpiarFormulario;
-                document.getElementById('formChofer').appendChild(btnCancelar);
-            }
+            document.getElementById('estatusChofer').style.display = 'inline-block';
+            document.getElementById('estatusChofer').value = estatus || 'Activo';
+            document.getElementById('btnGuardarChofer').innerText = 'Actualizar Chofer';
+            agregarBotonCancelar('formChofer', limpiarFormularioChofer);
         };
 
-        function limpiarFormulario() {
-            editId = null;
+        function limpiarFormularioChofer() {
+            editChoferId = null;
             document.getElementById('formChofer').reset();
-            document.getElementById('tituloFormulario').innerText = 'Registrar Nuevo Chofer';
-            document.getElementById('btnGuardar').innerText = 'Guardar Chofer';
-            const btnCancelar = document.getElementById('btnCancelar');
-            if (btnCancelar) btnCancelar.remove();
+            document.getElementById('tituloFormChofer').innerText = 'Registrar Nuevo Chofer';
+            document.getElementById('estatusChofer').style.display = 'none';
+            document.getElementById('btnGuardarChofer').innerText = 'Guardar Chofer';
+            removerBotonCancelar('formChofer');
         }
 
         document.getElementById('formChofer').onsubmit = async (e) => {
             e.preventDefault();
-            const nombre = document.getElementById('nombreChofer').value;
-            const licencia = document.getElementById('licenciaChofer').value;
-
-            const url = editId ? `${API_CHOFERES}/${editId}` : API_CHOFERES;
-            const metodo = editId ? 'PUT' : 'POST';
-
-            const res = await fetch(url, {
-                method: metodo,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, licencia })
-            });
-
-            if (res.ok) {
-                limpiarFormulario();
-                cargarChoferes();
-            } else {
-                const errorData = await res.json();
-                alert(errorData.message);
-            }
+            const payload = { 
+                nombre: document.getElementById('nombreChofer').value, 
+                licencia: document.getElementById('licenciaChofer').value,
+                estatus: editChoferId ? document.getElementById('estatusChofer').value : 'Activo'
+            };
+            const url = editChoferId ? `${API_CHOFERES}/${editChoferId}` : API_CHOFERES;
+            const metodo = editChoferId ? 'PUT' : 'POST';
+            await fetch(url, { method: metodo, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            limpiarFormularioChofer();
+            cargarChoferes();
         };
 
         window.eliminarChofer = async (id) => {
-            if(confirm('¿Estás seguro de eliminar este chofer?')) {
-                await fetch(`${API_CHOFERES}/${id}`, { method: 'DELETE' });
-                if(editId === id) limpiarFormulario();
+            if(confirm('¿Eliminar este chofer?')) {
+                const res = await fetch(`${API_CHOFERES}/${id}`, { method: 'DELETE' });
+                if (!res.ok) alert((await res.json()).message);
                 cargarChoferes();
             }
         };
 
-        // Cargar lista al iniciar
+        // ==================== VEHÍCULOS ====================
+        async function cargarVehiculos() {
+            const data = await (await fetch(API_VEHICULOS)).json();
+            document.getElementById('listaVehiculos').innerHTML = data.map(v => `
+                <li>🚗 ${v.modelo} (${v.anio}) [Placa: ${v.placa}] - 🏷️ ${v.estatus}
+                    <button onclick="prepararEditarVehiculo(${v.id}, '${v.placa}', '${v.modelo}', ${v.anio}, ${v.capacidad_kg}, '${v.estatus}')">Editar</button>
+                    <button onclick="eliminarVehiculo(${v.id})">Eliminar</button>
+                </li>`).join('');
+        }
+
+        window.prepararEditarVehiculo = (id, placa, modelo, anio, capacidad, estatus) => {
+            editVehiculoId = id;
+            document.getElementById('tituloFormVehiculo').innerText = 'Modificar Vehículo';
+            document.getElementById('placaVehiculo').value = placa;
+            document.getElementById('modeloVehiculo').value = modelo;
+            document.getElementById('anioVehiculo').value = anio;
+            document.getElementById('capacidadVehiculo').value = capacidad;
+            document.getElementById('estatusVehiculo').style.display = 'inline-block';
+            document.getElementById('estatusVehiculo').value = estatus || 'Disponible';
+            document.getElementById('btnGuardarVehiculo').innerText = 'Actualizar Vehículo';
+            agregarBotonCancelar('formVehiculo', limpiarFormularioVehiculo);
+        };
+
+        function limpiarFormularioVehiculo() {
+            editVehiculoId = null;
+            document.getElementById('formVehiculo').reset();
+            document.getElementById('tituloFormVehiculo').innerText = 'Registrar Nuevo Vehículo';
+            document.getElementById('estatusVehiculo').style.display = 'none';
+            document.getElementById('btnGuardarVehiculo').innerText = 'Guardar Vehículo';
+            removerBotonCancelar('formVehiculo');
+        }
+
+        document.getElementById('formVehiculo').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                placa: document.getElementById('placaVehiculo').value,
+                modelo: document.getElementById('modeloVehiculo').value,
+                anio: document.getElementById('anioVehiculo').value,
+                capacidad_kg: document.getElementById('capacidadVehiculo').value,
+                estatus: editVehiculoId ? document.getElementById('estatusVehiculo').value : 'Disponible'
+            };
+            const url = editVehiculoId ? `${API_VEHICULOS}/${editVehiculoId}` : API_VEHICULOS;
+            const metodo = editVehiculoId ? 'PUT' : 'POST';
+            await fetch(url, { method: metodo, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            limpiarFormularioVehiculo();
+            cargarVehiculos();
+        };
+
+        window.eliminarVehiculo = async (id) => {
+            if(confirm('¿Eliminar vehículo?')) {
+                const res = await fetch(`${API_VEHICULOS}/${id}`, { method: 'DELETE' });
+                if (!res.ok) alert((await res.json()).message);
+                cargarVehiculos();
+            }
+        };
+
+        // ==================== VIAJES ====================
+        async function cargarModuloViajes() {
+            document.getElementById('selectChofer').innerHTML = '<option value="">-- Selecciona Chofer --</option>' + 
+                (await (await fetch(API_CHOFERES)).json()).map(c => `<option value="${c.id}">${c.nombre} (${c.estatus})</option>`).join('');
+            document.getElementById('selectVehiculo').innerHTML = '<option value="">-- Selecciona Vehículo --</option>' + 
+                (await (await fetch(API_VEHICULOS)).json()).map(v => `<option value="${v.id}">${v.placa} (${v.estatus})</option>`).join('');
+            cargarBitacoraViajes();
+        }
+
+        async function cargarBitacoraViajes() {
+            const data = await (await fetch(API_VIAJES)).json();
+            const lista = document.getElementById('listaViajes');
+            if (data.length === 0) return lista.innerHTML = '<li>No hay viajes.</li>';
+
+            lista.innerHTML = data.map(v => {
+                const orig = v.origen.replace(/'/g, ""); const dest = v.destino.replace(/'/g, "");
+                return `
+                <li>
+                    📍 <strong>Ruta:</strong> ${v.origen} ➡️ ${v.destino}<br>
+                    👨‍✈️ <strong>Chofer:</strong> ${v.chofer} | 🚛 <strong>Unidad:</strong> ${v.vehiculo}<br>
+                    🏷️ <strong>Estatus:</strong> ${v.estatus} | 📅 ${new Date(v.fecha_salida).toLocaleString()}<br>
+                    👤 <strong>Asignado por:</strong> ${v.asignado_por}<br>
+                    <button onclick="prepararEditarViaje(${v.id}, ${v.chofer_id}, ${v.vehiculo_id}, '${orig}', '${dest}', '${v.estatus}')">Editar</button>
+                    <button onclick="eliminarViaje(${v.id})">Eliminar</button>
+                    <button onclick="imprimirTicket(${v.id}, '${orig}', '${dest}', '${v.chofer}', '${v.vehiculo}', '${v.fecha_salida}')">🖨️ Ticket</button>
+                    <hr>
+                </li>`}).join('');
+        }
+
+        window.prepararEditarViaje = (id, chofer_id, vehiculo_id, origen, destino, estatus) => {
+            editViajeId = id;
+            document.getElementById('tituloFormViaje').innerText = 'Modificar Viaje';
+            document.getElementById('selectChofer').value = chofer_id;
+            document.getElementById('selectVehiculo').value = vehiculo_id;
+            document.getElementById('origenViaje').value = origen;
+            document.getElementById('destinoViaje').value = destino;
+            document.getElementById('selectEstatus').style.display = 'inline-block';
+            document.getElementById('selectEstatus').value = estatus;
+            document.getElementById('btnGuardarViaje').innerText = 'Actualizar Viaje';
+            agregarBotonCancelar('formViaje', limpiarFormularioViaje);
+        };
+
+        function limpiarFormularioViaje() {
+            editViajeId = null;
+            document.getElementById('formViaje').reset();
+            document.getElementById('tituloFormViaje').innerText = 'Programar Nuevo Viaje';
+            document.getElementById('btnGuardarViaje').innerText = 'Asignar Viaje';
+            document.getElementById('selectEstatus').style.display = 'none';
+            removerBotonCancelar('formViaje');
+        }
+
+        document.getElementById('formViaje').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                chofer_id: document.getElementById('selectChofer').value,
+                vehiculo_id: document.getElementById('selectVehiculo').value,
+                origen: document.getElementById('origenViaje').value,
+                destino: document.getElementById('destinoViaje').value,
+                estatus: editViajeId ? document.getElementById('selectEstatus').value : 'Programado',
+                asignado_por: localStorage.getItem('usuario') || 'Admin'
+            };
+            const url = editViajeId ? `${API_VIAJES}/${editViajeId}` : API_VIAJES;
+            const metodo = editViajeId ? 'PUT' : 'POST';
+            await fetch(url, { method: metodo, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            limpiarFormularioViaje();
+            cargarBitacoraViajes();
+        };
+
+        window.eliminarViaje = async (id) => {
+            if(confirm('¿Eliminar viaje?')) {
+                await fetch(`${API_VIAJES}/${id}`, { method: 'DELETE' });
+                cargarBitacoraViajes();
+            }
+        };
+
+        // ==================== AUXILIARES ====================
+        function agregarBotonCancelar(idForm, funcionLimpiar) {
+            if (!document.getElementById(`btnCancelar-${idForm}`)) {
+                const btn = document.createElement('button');
+                btn.id = `btnCancelar-${idForm}`;
+                btn.type = 'button';
+                btn.innerText = 'Cancelar';
+                btn.onclick = funcionLimpiar;
+                document.getElementById(idForm).appendChild(btn);
+            }
+        }
+        function removerBotonCancelar(idForm) { const btn = document.getElementById(`btnCancelar-${idForm}`); if (btn) btn.remove(); }
+
+        let temporizador;
+        async function buscarDireccion(texto, idDatalist) {
+            if (texto.length < 4) return;
+            const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=mx&q=${encodeURIComponent(texto)}`;
+            document.getElementById(idDatalist).innerHTML = (await (await fetch(url)).json()).map(l => `<option value="${l.display_name}">`).join('');
+        }
+        document.getElementById('origenViaje').addEventListener('input', (e) => { clearTimeout(temporizador); temporizador = setTimeout(() => buscarDireccion(e.target.value, 'sugerenciasOrigen'), 500); });
+        document.getElementById('destinoViaje').addEventListener('input', (e) => { clearTimeout(temporizador); temporizador = setTimeout(() => buscarDireccion(e.target.value, 'sugerenciasDestino'), 500); });
+
+        window.imprimirTicket = (id, origen, destino, chofer, vehiculo, fecha) => {
+            const v = window.open('', '_blank', 'width=400,height=600');
+            v.document.write(`<html><head><title>Ticket #${id}</title><style>body{font-family:'Courier New',Courier,monospace;padding:20px;font-size:14px}h2{text-align:center;border-bottom:2px dashed #000;padding-bottom:10px}.fila{margin-bottom:10px}.etiqueta{font-weight:bold}</style></head><body><h2>KOSMOS GPS<br>TICKET DE DESPACHO</h2><div class="fila"><span class="etiqueta">VIAJE ID:</span> ${id}</div><div class="fila"><span class="etiqueta">FECHA:</span> ${new Date(fecha).toLocaleString()}</div><hr style="border: 1px dashed #000;"><div class="fila"><span class="etiqueta">OPERADOR:</span><br> ${chofer}</div><div class="fila"><span class="etiqueta">UNIDAD:</span><br> ${vehiculo}</div><hr style="border: 1px dashed #000;"><div class="fila"><span class="etiqueta">ORIGEN:</span><br> ${origen}</div><div class="fila"><span class="etiqueta">DESTINO:</span><br> ${destino}</div><hr style="border: 1px dashed #000;"><p style="text-align: center;">*** VIAJE AUTORIZADO ***</p></body></html>`);
+            v.document.close();
+            setTimeout(() => { v.print(); }, 500); 
+        };
+
         cargarChoferes();
     </script>
 </body>

@@ -5,41 +5,57 @@
     <title>Portal Chofer | Kosmos GPS</title>
 </head>
 <body>
-    <h1>Portal del Chofer</h1>
+    <h1>Portal del Operador Logístico</h1>
     <button id="btnSalir">Cerrar Sesión</button>
 
-    <h3>Mis Datos Registrados</h3>
+    <h3>Mis Credenciales</h3>
     <ul>
         <li><strong>Nombre:</strong> <span id="infoNombre"></span></li>
         <li><strong>Licencia:</strong> <span id="infoLicencia"></span></li>
+        <li><strong>Estatus Actual:</strong> <span id="infoEstatus"></span></li>
     </ul>
 
-    <script>
-        // 1. PROTECCIÓN DE RUTA FRONTEND
-        // Si el rol en almacenamiento local no corresponde a chofer, redirige inmediatamente
-        if (localStorage.getItem('rol') !== 'chofer') {
-            window.location.href = '/login.html';
-        }
+    <h3>Mis Viajes Asignados</h3>
+    <ul id="listaMisViajes"></ul>
 
-        // 2. RECUPERAR Y MOSTRAR DATOS DE SESIÓN
-        const datosGuardados = localStorage.getItem('datosChofer');
+    <script>
+        if (localStorage.getItem('rol') !== 'chofer') window.location.href = '/login.html';
+
+        const chofer = JSON.parse(localStorage.getItem('datosChofer'));
         
-        if (datosGuardados) {
-            const chofer = JSON.parse(datosGuardados);
+        if (chofer) {
             document.getElementById('infoNombre').innerText = chofer.nombre;
             document.getElementById('infoLicencia').innerText = chofer.licencia;
-        } else {
-            // Manejo de caso borde en caso de alteración del almacenamiento local
-            alert('No se encontraron datos del operador. Volviendo al login.');
-            localStorage.clear();
-            window.location.href = '/login.html';
+            document.getElementById('infoEstatus').innerText = chofer.estatus || 'Activo';
+            cargarMisViajes(chofer.id);
         }
 
-        // 3. CONTROLADOR DE CIERRE DE SESIÓN
         document.getElementById('btnSalir').onclick = () => {
-            localStorage.clear(); // Limpia los datos de sesión del navegador
-            window.location.href = '/login.html'; // Redirección
+            localStorage.clear();
+            window.location.href = '/login.html';
         };
+
+        async function cargarMisViajes(idChofer) {
+            const res = await fetch(`/api/viajes/chofer/${idChofer}`);
+            const viajes = await res.json();
+            const lista = document.getElementById('listaMisViajes');
+
+            if (viajes.length === 0) {
+                lista.innerHTML = '<li>No tienes viajes asignados actualmente.</li>';
+                return;
+            }
+
+            lista.innerHTML = viajes.map(v => `
+                <li style="margin-bottom: 15px;">
+                    📍 <strong>Ruta:</strong> ${v.origen} ➡️ ${v.destino} <br>
+                    🚛 <strong>Unidad:</strong> ${v.modelo} [Placa: ${v.placa}] <br>
+                    🏷️ <strong>Estatus del Viaje:</strong> ${v.estatus} <br>
+                    📅 <strong>Fecha de Asignación:</strong> ${new Date(v.fecha_salida).toLocaleString()}<br>
+                    👤 <strong>Asignado por:</strong> ${v.asignado_por}
+                    <hr>
+                </li>
+            `).join('');
+        }
     </script>
 </body>
 </html>

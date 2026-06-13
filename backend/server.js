@@ -23,6 +23,8 @@ app.get('/api/status', async (req, res) => {
 // Importación y uso de rutas modulares
 app.use('/api/choferes', require('./routes/choferes'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/vehiculos', require('./routes/vehiculos'));
+app.use('/api/viajes', require('./routes/viajes'));
 
 // Servir archivos estáticos de la carpeta frontend
 app.use(express.static('frontend'));
