@@ -3,76 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>Login | Kosmos GPS</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Bienvenido a KOSMOS GPS</h1>
-    
-    <h2>Acceso Administrador</h2>
-    <form id="formLoginAdmin">
-        <input type="text" id="adminUsuario" placeholder="Usuario" required>
-        <input type="password" id="adminPassword" placeholder="Contraseña" required>
-        <button type="submit">Entrar como Admin</button>
-    </form>
+    <div class="container">
+        <h1>Bienvenido a KOSMOS GPS</h1>
+        
+        <h2>Acceso Administrador</h2>
+        <form id="formLoginAdmin">
+            <input type="text" id="adminUsuario" placeholder="Usuario" required>
+            <input type="password" id="adminPassword" placeholder="Contraseña" required>
+            <button type="submit">Entrar como Admin</button>
+        </form>
 
-    <br><hr><br>
+        <br><hr><br>
 
-    <h2>Acceso Chofer</h2>
-    <form id="formLoginChofer">
-        <input type="text" id="loginLicencia" placeholder="Número de Licencia" required>
-        <button type="submit">Entrar como Chofer</button>
-    </form>
+        <h2>Acceso Chofer</h2>
+        <form id="formLoginChofer">
+            <input type="text" id="loginLicencia" placeholder="Número de Licencia" required>
+            <button type="submit">Entrar como Chofer</button>
+        </form>
+    </div>
 
     <script>
         const API_AUTH_ADMIN = '/api/auth/admin';
         const API_AUTH_CHOFER = '/api/auth/chofer';
 
-        // Redirigir automáticamente si ya hay una sesión activa
+        // Redirección si ya hay sesión
         const rolActivo = localStorage.getItem('rol');
         if (rolActivo === 'admin') window.location.href = '/admin.html';
         if (rolActivo === 'chofer') window.location.href = '/chofer.html';
 
-        // Login Admin
         document.getElementById('formLoginAdmin').onsubmit = async (e) => {
             e.preventDefault();
-            const usuario = document.getElementById('adminUsuario').value;
-            const password = document.getElementById('adminPassword').value;
-
             const res = await fetch(API_AUTH_ADMIN, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ usuario, password })
+                body: JSON.stringify({ 
+                    usuario: document.getElementById('adminUsuario').value, 
+                    password: document.getElementById('adminPassword').value 
+                })
             });
-
             if (res.ok) {
                 const data = await res.json();
                 localStorage.setItem('rol', 'admin');
                 localStorage.setItem('usuario', data.usuario);
-                window.location.href = '/admin.html'; // Redirección
-            } else {
-                alert('Credenciales de administrador incorrectas');
-            }
+                window.location.href = '/admin.html';
+            } else { alert('Credenciales incorrectas'); }
         };
 
-        // Login Chofer
         document.getElementById('formLoginChofer').onsubmit = async (e) => {
             e.preventDefault();
-            const licencia = document.getElementById('loginLicencia').value;
-
             const res = await fetch(API_AUTH_CHOFER, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ licencia })
+                body: JSON.stringify({ licencia: document.getElementById('loginLicencia').value })
             });
-
             if (res.ok) {
                 const data = await res.json();
                 localStorage.setItem('rol', 'chofer');
-                // Guardamos los datos del chofer para mostrarlos en su vista
                 localStorage.setItem('datosChofer', JSON.stringify(data.datos));
-                window.location.href = '/chofer.html'; // Redirección
-            } else {
-                alert('Licencia no encontrada');
-            }
+                window.location.href = '/chofer.html';
+            } else { alert('Licencia no encontrada'); }
         };
     </script>
 </body>

@@ -1,0 +1,191 @@
+/* =========================================
+   VARIABLES Y RESET BÁSICO
+   ========================================= */
+:root {
+    --primary-color: #e85d04; /* Naranja cálido corporativo */
+    --primary-hover: #dc2f02;
+    --bg-color: #fcfaf8; /* Fondo gris/crema muy claro */
+    --card-bg: #ffffff;
+    --text-main: #2b2b2b;
+    --text-muted: #666666;
+    --border-color: #eaeaea;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    padding: 2rem;
+}
+
+/* =========================================
+   CONTENEDORES Y TIPOGRAFÍA
+   ========================================= */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+}
+
+h1 {
+    font-size: 2rem;
+    color: #1a1a1a;
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+    display: inline-block;
+}
+
+h2, h3 {
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* =========================================
+   NAVEGACIÓN (TABS)
+   ========================================= */
+nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+nav button {
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -0.5rem; /* Alinea con el borde del nav */
+}
+
+nav button:hover, nav button:focus {
+    color: var(--primary-color);
+    background: transparent;
+    border-bottom-color: var(--primary-color);
+    transform: none;
+    box-shadow: none;
+}
+
+/* =========================================
+   FORMULARIOS
+   ========================================= */
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    background: #fafafa;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 3rem;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.85rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(232, 93, 4, 0.15);
+}
+
+/* Formulario de Login (1 sola columna) */
+#seccion-login form {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+}
+
+/* =========================================
+   BOTONES
+   ========================================= */
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.85rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    grid-column: 1 / -1; /* Ocupa todo el ancho en el grid */
+}
+
+button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 47, 2, 0.2);
+}
+
+/* Botones secundarios (Cancelar, Eliminar) */
+button[id^="btnCancelar"], button:contains("Eliminar") {
+    background-color: #6c757d;
+}
+
+button[id^="btnCancelar"]:hover {
+    background-color: #5a6268;
+}
+
+/* Botones dentro de las listas */
+li button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    display: inline-block;
+    width: auto;
+}
+
+/* =========================================
+   LISTAS Y TARJETAS (CARDS)
+   ========================================= */
+ul {
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+}
+
+li {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    transition: transform 0.2s ease;
+}
+
+li:hover {
+    border-color: #dcdcdc;
+    transform: translateY(-2px);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 1rem 0;
+}

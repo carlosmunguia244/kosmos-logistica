@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Portal Chofer | Kosmos GPS</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Portal del Operador Logístico</h1>
-    <button id="btnSalir">Cerrar Sesión</button>
+    <div class="container">
+        <h1>Portal del Operador Logístico</h1>
+        <button id="btnSalir">Cerrar Sesión</button>
 
-    <h3>Mis Credenciales</h3>
-    <ul>
-        <li><strong>Nombre:</strong> <span id="infoNombre"></span></li>
-        <li><strong>Licencia:</strong> <span id="infoLicencia"></span></li>
-        <li><strong>Estatus Actual:</strong> <span id="infoEstatus"></span></li>
-    </ul>
+        <h3>Mis Credenciales</h3>
+        <ul>
+            <li><strong>Nombre:</strong> <span id="infoNombre"></span></li>
+            <li><strong>Licencia:</strong> <span id="infoLicencia"></span></li>
+            <li><strong>Estatus Actual:</strong> <span id="infoEstatus"></span></li>
+        </ul>
 
-    <h3>Mis Viajes Asignados</h3>
-    <ul id="listaMisViajes"></ul>
+        <h3>Mis Viajes Asignados</h3>
+        <ul id="listaMisViajes"></ul>
+    </div>
 
     <script>
         if (localStorage.getItem('rol') !== 'chofer') window.location.href = '/login.html';
@@ -46,13 +49,12 @@
             }
 
             lista.innerHTML = viajes.map(v => `
-                <li style="margin-bottom: 15px;">
+                <li>
                     📍 <strong>Ruta:</strong> ${v.origen} ➡️ ${v.destino} <br>
                     🚛 <strong>Unidad:</strong> ${v.modelo} [Placa: ${v.placa}] <br>
-                    🏷️ <strong>Estatus del Viaje:</strong> ${v.estatus} <br>
+                    🏷️ <strong>Estatus:</strong> ${v.estatus} <br>
                     📅 <strong>Fecha de Asignación:</strong> ${new Date(v.fecha_salida).toLocaleString()}<br>
                     👤 <strong>Asignado por:</strong> ${v.asignado_por}
-                    <hr>
                 </li>
             `).join('');
         }

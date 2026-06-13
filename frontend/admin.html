@@ -3,95 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel Admin | Kosmos GPS</title>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h1>Panel de Control - Administrador</h1>
-    <p>Usuario Activo: <strong id="nombreAdminUI"></strong></p>
-    <button id="btnSalir">Cerrar Sesión</button>
 
-    <nav>
-        <button onclick="cambiarPestaña('modulo-choferes')">Gestionar Choferes</button>
-        <button onclick="cambiarPestaña('modulo-vehiculos')">Gestionar Vehículos</button>
-        <button onclick="cambiarPestaña('modulo-viajes')">Despacho de Viajes</button>
-    </nav>
+    <div class="container">
+        <h1>Panel de Control - Administrador</h1>
+        <p>Usuario Activo: <strong id="nombreAdminUI"></strong></p>
+        <button id="btnSalir">Cerrar Sesión</button>
 
-    <br><hr><br>
+        <nav>
+            <button onclick="cambiarPestaña('modulo-choferes')">Gestionar Choferes</button>
+            <button onclick="cambiarPestaña('modulo-vehiculos')">Gestionar Vehículos</button>
+            <button onclick="cambiarPestaña('modulo-viajes')">Despacho de Viajes</button>
+        </nav>
 
-    <div id="modulo-choferes" class="seccion-modulo">
-        <h3 id="tituloFormChofer">Registrar Nuevo Chofer</h3>
-        <form id="formChofer">
-            <input type="text" id="nombreChofer" placeholder="Nombre completo" required>
-            <input type="text" id="licenciaChofer" placeholder="Licencia" required>
-            <select id="estatusChofer" style="display: none;">
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-                <option value="De vacaciones">De vacaciones</option>
-                <option value="Incapacitado">Incapacitado</option>
-                <option value="Suspendido">Suspendido</option>
-                <option value="Disponible">Disponible</option>
-                <option value="En ruta">En ruta</option>
-            </select>
-            <button type="submit" id="btnGuardarChofer">Guardar Chofer</button>
-        </form>
-        <h3>Lista de Choferes</h3>
-        <ul id="listaChoferes"></ul>
-    </div>
+        <br><hr><br>
 
-    <div id="modulo-vehiculos" class="seccion-modulo" style="display: none;">
-        <h3 id="tituloFormVehiculo">Registrar Nuevo Vehículo</h3>
-        <form id="formVehiculo">
-            <input type="text" id="placaVehiculo" placeholder="Placa (ej: ABC-123)" required>
-            <input type="text" id="modeloVehiculo" placeholder="Modelo (ej: Nissan NP300)" required>
-            <input type="number" id="anioVehiculo" placeholder="Año (ej: 2024)" required min="1990" max="2030">
-            <input type="number" id="capacidadVehiculo" placeholder="Capacidad en kg" required>
-            <select id="estatusVehiculo" style="display: none;">
-                <option value="Disponible">Disponible</option>
-                <option value="Asignado">Asignado</option>
-                <option value="En ruta">En ruta</option>
-                <option value="En mantenimiento preventivo">En mantenimiento preventivo</option>
-                <option value="En mantenimiento correctivo">En mantenimiento correctivo</option>
-                <option value="Fuera de servicio">Fuera de servicio</option>
-                <option value="En inspección">En inspección</option>
-            </select>
-            <button type="submit" id="btnGuardarVehiculo">Guardar Vehículo</button>
-        </form>
-        <h3>Flota de Vehículos</h3>
-        <ul id="listaVehiculos"></ul>
-    </div>
+        <div id="modulo-choferes" class="seccion-modulo">
+            <h3 id="tituloFormChofer">Registrar Nuevo Chofer</h3>
+            <form id="formChofer">
+                <input type="text" id="nombreChofer" placeholder="Nombre completo" required>
+                <input type="text" id="licenciaChofer" placeholder="Licencia" required>
+                <select id="estatusChofer" style="display: none;">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="De vacaciones">De vacaciones</option>
+                    <option value="Incapacitado">Incapacitado</option>
+                    <option value="Suspendido">Suspendido</option>
+                    <option value="Disponible">Disponible</option>
+                    <option value="En ruta">En ruta</option>
+                </select>
+                <button type="submit" id="btnGuardarChofer">Guardar Chofer</button>
+            </form>
+            <h3>Lista de Choferes</h3>
+            <ul id="listaChoferes"></ul>
+        </div>
 
-    <div id="modulo-viajes" class="seccion-modulo" style="display: none;">
-        <h3 id="tituloFormViaje">Programar Nuevo Viaje</h3>
-        <form id="formViaje">
-            <select id="selectChofer" required><option value="">-- Selecciona Chofer --</option></select>
-            <select id="selectVehiculo" required><option value="">-- Selecciona Vehículo --</option></select>
+        <div id="modulo-vehiculos" class="seccion-modulo" style="display: none;">
+            <h3 id="tituloFormVehiculo">Registrar Nuevo Vehículo</h3>
+            <form id="formVehiculo">
+                <input type="text" id="placaVehiculo" placeholder="Placa (ej: ABC-123)" required>
+                <input type="text" id="modeloVehiculo" placeholder="Modelo (ej: Nissan NP300)" required>
+                <input type="number" id="anioVehiculo" placeholder="Año (ej: 2024)" required min="1990" max="2030">
+                <input type="number" id="capacidadVehiculo" placeholder="Capacidad en kg" required>
+                <select id="estatusVehiculo" style="display: none;">
+                    <option value="Disponible">Disponible</option>
+                    <option value="Asignado">Asignado</option>
+                    <option value="En ruta">En ruta</option>
+                    <option value="En mantenimiento preventivo">En mantenimiento preventivo</option>
+                    <option value="En mantenimiento correctivo">En mantenimiento correctivo</option>
+                    <option value="Fuera de servicio">Fuera de servicio</option>
+                    <option value="En inspección">En inspección</option>
+                </select>
+                <button type="submit" id="btnGuardarVehiculo">Guardar Vehículo</button>
+            </form>
+            <h3>Flota de Vehículos</h3>
+            <ul id="listaVehiculos"></ul>
+        </div>
 
-            <input type="text" id="origenViaje" list="sugerenciasOrigen" placeholder="Origen..." required autocomplete="off">
-            <datalist id="sugerenciasOrigen"></datalist>
+        <div id="modulo-viajes" class="seccion-modulo" style="display: none;">
+            <h3 id="tituloFormViaje">Programar Nuevo Viaje</h3>
+            <form id="formViaje">
+                <select id="selectChofer" required><option value="">-- Selecciona Chofer --</option></select>
+                <select id="selectVehiculo" required><option value="">-- Selecciona Vehículo --</option></select>
+                <input type="text" id="origenViaje" list="sugerenciasOrigen" placeholder="Origen..." required autocomplete="off">
+                <datalist id="sugerenciasOrigen"></datalist>
+                <input type="text" id="destinoViaje" list="sugerenciasDestino" placeholder="Destino..." required autocomplete="off">
+                <datalist id="sugerenciasDestino"></datalist>
+                <select id="selectEstatus" style="display: none;">
+                    <option value="Programado">Programado</option>
+                    <option value="Pendiente de salida">Pendiente de salida</option>
+                    <option value="En carga">En carga</option>
+                    <option value="En tránsito">En tránsito</option>
+                    <option value="En entrega">En entrega</option>
+                    <option value="Completado">Completado</option>
+                    <option value="Cancelado">Cancelado</option>
+                    <option value="Retrasado">Retrasado</option>
+                </select>
+                <button type="submit" id="btnGuardarViaje">Asignar Viaje</button>
+            </form>
+            <h3>Bitácora de Viajes</h3>
+            <ul id="listaViajes"></ul>
+        </div>
 
-            <input type="text" id="destinoViaje" list="sugerenciasDestino" placeholder="Destino..." required autocomplete="off">
-            <datalist id="sugerenciasDestino"></datalist>
-
-            <select id="selectEstatus" style="display: none;">
-                <option value="Programado">Programado</option>
-                <option value="Pendiente de salida">Pendiente de salida</option>
-                <option value="En carga">En carga</option>
-                <option value="En tránsito">En tránsito</option>
-                <option value="En entrega">En entrega</option>
-                <option value="Completado">Completado</option>
-                <option value="Cancelado">Cancelado</option>
-                <option value="Retrasado">Retrasado</option>
-            </select>
-
-            <button type="submit" id="btnGuardarViaje">Asignar Viaje</button>
-        </form>
-        <h3>Bitácora de Viajes</h3>
-        <ul id="listaViajes"></ul>
     </div>
 
     <script>
         if (localStorage.getItem('rol') !== 'admin') window.location.href = '/login.html';
-        
-        // Mostrar nombre del admin logueado
         document.getElementById('nombreAdminUI').innerText = localStorage.getItem('usuario') || 'Administrador';
 
         const API_CHOFERES = '/api/choferes';
@@ -115,7 +114,7 @@
             window.location.href = '/login.html';
         };
 
-        // ==================== CHOFERES ====================
+        // --- CHOFERES ---
         async function cargarChoferes() {
             const data = await (await fetch(API_CHOFERES)).json();
             document.getElementById('listaChoferes').innerHTML = data.map(c => `
@@ -167,7 +166,7 @@
             }
         };
 
-        // ==================== VEHÍCULOS ====================
+        // --- VEHÍCULOS ---
         async function cargarVehiculos() {
             const data = await (await fetch(API_VEHICULOS)).json();
             document.getElementById('listaVehiculos').innerHTML = data.map(v => `
@@ -223,7 +222,7 @@
             }
         };
 
-        // ==================== VIAJES ====================
+        // --- VIAJES ---
         async function cargarModuloViajes() {
             document.getElementById('selectChofer').innerHTML = '<option value="">-- Selecciona Chofer --</option>' + 
                 (await (await fetch(API_CHOFERES)).json()).map(c => `<option value="${c.id}">${c.nombre} (${c.estatus})</option>`).join('');
@@ -236,19 +235,15 @@
             const data = await (await fetch(API_VIAJES)).json();
             const lista = document.getElementById('listaViajes');
             if (data.length === 0) return lista.innerHTML = '<li>No hay viajes.</li>';
-
             lista.innerHTML = data.map(v => {
                 const orig = v.origen.replace(/'/g, ""); const dest = v.destino.replace(/'/g, "");
-                return `
-                <li>
-                    📍 <strong>Ruta:</strong> ${v.origen} ➡️ ${v.destino}<br>
+                return `<li>📍 <strong>Ruta:</strong> ${v.origen} ➡️ ${v.destino}<br>
                     👨‍✈️ <strong>Chofer:</strong> ${v.chofer} | 🚛 <strong>Unidad:</strong> ${v.vehiculo}<br>
                     🏷️ <strong>Estatus:</strong> ${v.estatus} | 📅 ${new Date(v.fecha_salida).toLocaleString()}<br>
                     👤 <strong>Asignado por:</strong> ${v.asignado_por}<br>
                     <button onclick="prepararEditarViaje(${v.id}, ${v.chofer_id}, ${v.vehiculo_id}, '${orig}', '${dest}', '${v.estatus}')">Editar</button>
                     <button onclick="eliminarViaje(${v.id})">Eliminar</button>
                     <button onclick="imprimirTicket(${v.id}, '${orig}', '${dest}', '${v.chofer}', '${v.vehiculo}', '${v.fecha_salida}')">🖨️ Ticket</button>
-                    <hr>
                 </li>`}).join('');
         }
 
@@ -298,7 +293,6 @@
             }
         };
 
-        // ==================== AUXILIARES ====================
         function agregarBotonCancelar(idForm, funcionLimpiar) {
             if (!document.getElementById(`btnCancelar-${idForm}`)) {
                 const btn = document.createElement('button');
