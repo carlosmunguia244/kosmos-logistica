@@ -68,11 +68,19 @@ npm install
 Esto descargará express, mysql2 y dotenv automáticamente.
 
 C. Configuración de Base de Datos
-Abre el panel de control de XAMPP y presiona el botón "Admin" junto al módulo MySQL. Esto abrirá phpMyAdmin en tu navegador.
+Abre el panel de control de XAMPP y presiona el botón "Admin" junto al módulo MySQL para abrir phpMyAdmin (http://localhost/phpmyadmin) en tu navegador.
+
+Verifica si la base de datos kosmos_logistica ya aparece en el panel izquierdo:
+
+Si ya está creada: El entorno ya cuenta con la estructura necesaria; puedes omitir la importación y proceder a la ejecución del servidor.
+
+Si no aparece: Sigue estos pasos para realizar una instalación limpia:
 
 Crea una nueva base de datos llamada kosmos_logistica.
 
-Selecciona la base de datos, ve a la pestaña "Importar", sube el archivo database/init.sql que se encuentra en la carpeta del repositorio y ejecuta la importación.
+Selecciónala en el panel izquierdo, haz clic en la pestaña "Importar" en la parte superior.
+
+Selecciona el archivo database/init.sql incluido en la carpeta del repositorio y presiona el botón "Continuar" para cargar la estructura y tablas automáticamente.
 
 D. Variables de Entorno
 Crea un archivo llamado .env en la raíz del proyecto y agrega tus configuraciones:
