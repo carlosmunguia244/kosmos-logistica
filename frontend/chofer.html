@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Chofer | Kosmos GPS</title>
+</head>
+<body>
+    <h1>Portal del Chofer</h1>
+    <button id="btnSalir">Cerrar Sesión</button>
+
+    <h3>Mis Datos Registrados</h3>
+    <ul>
+        <li><strong>Nombre:</strong> <span id="infoNombre"></span></li>
+        <li><strong>Licencia:</strong> <span id="infoLicencia"></span></li>
+    </ul>
+
+    <script>
+        // 1. PROTECCIÓN DE RUTA FRONTEND
+        // Si el rol en almacenamiento local no corresponde a chofer, redirige inmediatamente
+        if (localStorage.getItem('rol') !== 'chofer') {
+            window.location.href = '/login.html';
+        }
+
+        // 2. RECUPERAR Y MOSTRAR DATOS DE SESIÓN
+        const datosGuardados = localStorage.getItem('datosChofer');
+        
+        if (datosGuardados) {
+            const chofer = JSON.parse(datosGuardados);
+            document.getElementById('infoNombre').innerText = chofer.nombre;
+            document.getElementById('infoLicencia').innerText = chofer.licencia;
+        } else {
+            // Manejo de caso borde en caso de alteración del almacenamiento local
+            alert('No se encontraron datos del operador. Volviendo al login.');
+            localStorage.clear();
+            window.location.href = '/login.html';
+        }
+
+        // 3. CONTROLADOR DE CIERRE DE SESIÓN
+        document.getElementById('btnSalir').onclick = () => {
+            localStorage.clear(); // Limpia los datos de sesión del navegador
+            window.location.href = '/login.html'; // Redirección
+        };
+    </script>
+</body>
+</html>

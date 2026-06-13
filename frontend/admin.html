@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admin | Kosmos GPS</title>
+</head>
+<body>
+    <h1>Panel de Control - Administrador</h1>
+    <button id="btnSalir">Cerrar Sesión</button>
+    
+    <h3 id="tituloFormulario">Registrar Nuevo Chofer</h3>
+    <form id="formChofer">
+        <input type="text" id="nombreChofer" placeholder="Nombre completo" required>
+        <input type="text" id="licenciaChofer" placeholder="Licencia" required>
+        <button type="submit" id="btnGuardar">Guardar Chofer</button>
+    </form>
+
+    <h3>Lista de Choferes Activos</h3>
+    <ul id="listaChoferes"></ul>
+
+    <script>
+        // 1. PROTECCIÓN DE RUTA FRONTEND
+        if (localStorage.getItem('rol') !== 'admin') {
+            window.location.href = '/login.html';
+        }
+
+        const API_CHOFERES = '/api/choferes';
+        let editId = null;
+
+        // Cerrar sesión
+        document.getElementById('btnSalir').onclick = () => {
+            localStorage.clear(); // Borra los datos guardados
+            window.location.href = '/login.html';
+        };
+
+        // --- AQUÍ VA EXACTAMENTE LA MISMA LÓGICA CRUD QUE YA TENÍAMOS ---
+        async function cargarChoferes() {
+            const res = await fetch(API_CHOFERES);
+            const data = await res.json();
+            const lista = document.getElementById('listaChoferes');
+            lista.innerHTML = data.map(c => `
+                <li>
+                    ${c.nombre} - Licencia: ${c.licencia} 
+                    <button onclick="prepararEditar(${c.id}, '${c.nombre}', '${c.licencia}')">Editar</button>
+                    <button onclick="eliminarChofer(${c.id})">Eliminar</button>
+                </li>
+            `).join('');
+        }
+
+        window.prepararEditar = (id, nombre, licencia) => {
+            editId = id;
+            document.getElementById('tituloFormulario').innerText = 'Modificar Datos del Chofer';
+            document.getElementById('nombreChofer').value = nombre;
+            document.getElementById('licenciaChofer').value = licencia;
+            document.getElementById('btnGuardar').innerText = 'Actualizar Chofer';
+
+            if (!document.getElementById('btnCancelar')) {
+                const btnCancelar = document.createElement('button');
+                btnCancelar.id = 'btnCancelar';
+                btnCancelar.type = 'button';
+                btnCancelar.innerText = 'Cancelar Edición';
+                btnCancelar.onclick = limpiarFormulario;
+                document.getElementById('formChofer').appendChild(btnCancelar);
+            }
+        };
+
+        function limpiarFormulario() {
+            editId = null;
+            document.getElementById('formChofer').reset();
+            document.getElementById('tituloFormulario').innerText = 'Registrar Nuevo Chofer';
+            document.getElementById('btnGuardar').innerText = 'Guardar Chofer';
+            const btnCancelar = document.getElementById('btnCancelar');
+            if (btnCancelar) btnCancelar.remove();
+        }
+
+        document.getElementById('formChofer').onsubmit = async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombreChofer').value;
+            const licencia = document.getElementById('licenciaChofer').value;
+
+            const url = editId ? `${API_CHOFERES}/${editId}` : API_CHOFERES;
+            const metodo = editId ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: metodo,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, licencia })
+            });
+
+            if (res.ok) {
+                limpiarFormulario();
+                cargarChoferes();
+            } else {
+                const errorData = await res.json();
+                alert(errorData.message);
+            }
+        };
+
+        window.eliminarChofer = async (id) => {
+            if(confirm('¿Estás seguro de eliminar este chofer?')) {
+                await fetch(`${API_CHOFERES}/${id}`, { method: 'DELETE' });
+                if(editId === id) limpiarFormulario();
+                cargarChoferes();
+            }
+        };
+
+        // Cargar lista al iniciar
+        cargarChoferes();
+    </script>
+</body>
+</html>

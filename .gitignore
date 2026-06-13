@@ -1,7 +1,7 @@
-# Dependencias de Node
+# Dependencias de Node (se instalan solas con npm install)
 node_modules/
 
-# Variables de entorno
+# Variables de entorno (contienen contraseñas)
 .env
 
 # Archivos de sistema operativo
