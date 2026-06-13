@@ -1,42 +1,81 @@
-# KOSMOS GPS - Gestión Logística
+# Descripción del proyecto
 
-Aplicación web Full Stack para el control operativo de choferes. Desarrollada como prueba técnica, demuestra habilidades en la creación de APIs REST, gestión de bases de datos relacionales y seguridad básica.
+Sistema de administración integral diseñado para optimizar el control operativo de flotas vehiculares. La plataforma permite la gestión centralizada de choferes, parque vehicular y la programación de viajes, garantizando la trazabilidad operativa mediante una arquitectura robusta y segura.
+
+Problema que resuelve:
+El sistema resuelve la falta de control, la redundancia de datos y la descentralización operativa. Permite pasar de procesos manuales o desconectados a una plataforma única donde el administrador puede asignar recursos de manera eficiente, validar estados en tiempo real y auditar quién y cuándo se realizó cada movimiento logístico.
+
+Alcance:
+El proyecto abarca el ciclo de vida completo de la gestión de flota: desde el registro y control de estatus del personal y vehículos, hasta la generación de bitácoras de viajes con geolocalización integrada y la emisión de tickets de despacho para los operadores.
 
 ---
 
 ## Tecnologías
 
-* **Backend:** Node.js, Express.js.
-* **Base de Datos:** MySQL (Driver `mysql2` con Promesas).
-* **Frontend:** HTML5, JavaScript (Vanilla ES6), API Fetch.
-* **Arquitectura:** Cliente-Servidor (SPA consumiendo API REST).
+Entorno de Desarrollo (IDE): Visual Studio Code (VS Code), aprovechando su ecosistema de extensiones para la optimización del flujo de trabajo (incluyendo Database Client para la gestión de MySQL, Prettier para formato de código y Thunder Client para pruebas de API).
+
+Entorno de Servidor Local: XAMPP, utilizado para la gestión del servidor MySQL y el control de la base de datos de manera local durante el desarrollo.
+
+Entorno de Ejecución: Node.js con Express.js, proporcionando un servidor de alto rendimiento para la API RESTful.
+
+Base de Datos: MySQL para la persistencia de datos relacionales, utilizando el driver mysql2 para gestionar consultas asíncronas de manera eficiente.
+
+Frontend: Desarrollo web basado en estándares modernos (HTML5, CSS3, y JavaScript ES6+), utilizando una arquitectura de cliente ligero que consume la API mediante fetch.
+
+Integración de Servicios: Consumo de la API de OpenStreetMap (Nominatim) para la geolocalización y sugerencia dinámica de direcciones.
+
+Control de Versiones: Git para la gestión del historial de cambios y GitHub como plataforma de despliegue y colaboración.
 
 ---
 
-## Características Principales
+## Pasos de Instalación
 
-* **Sistema de Roles:** Acceso independiente y rutas protegidas para Administradores y Operadores (Choferes).
-* **Gestión de Entidades (CRUD Completo):**
-  * **Choferes:** Alta, edición y control de estatus (Activo, En ruta, Vacaciones, etc.).
-  * **Vehículos:** Control de flota, capacidades de carga, año y estado físico.
-  * **Viajes:** Motor relacional (JOINs) que vincula al chofer, el vehículo y el administrador responsable.
-* **Portal del Chofer:** Vista personalizada donde el operador consulta sus credenciales y su bitácora de viajes asignados en tiempo real.
-* **Integración de Mapas:** Autocompletado de direcciones de origen y destino consumiendo la API de OpenStreetMap.
-* **Impresión y Reportes:** Generación automática de tickets de despacho en formato de recibo para los viajes programados.
-* **Auditoría:** Registro automático del usuario que asigna cada viaje y fechas exactas de salida.
+Guía de Configuración e Instalación
+Para ejecutar este proyecto en un entorno local, sigue los pasos detallados a continuación:
 
----
+A. Herramientas de Desarrollo Requeridas
+Visual Studio Code (VS Code):
 
-## Instalación y Uso
+Instalación: Descárgalo desde code.visualstudio.com. Sigue el asistente de instalación estándar para tu sistema operativo.
 
-1. Clonar e Instalar
-bash
-git clone [https://github.com/carlosmunguia244/kosmos-logistica.git](https://github.com/carlosmunguia244/kosmos-logistica.git)
+Extensiones recomendadas:
+
+Database Client: Úsala para conectarte a tu servidor MySQL sin salir del editor.
+
+Prettier - Code formatter: Para mantener el estilo del código profesional y limpio.
+
+Thunder Client: Útil para probar tus endpoints de API (GET, POST, etc.) antes de conectarlos al frontend.
+
+XAMPP:
+
+Instalación: Descárgalo desde apachefriends.org. Durante la instalación, asegúrate de marcar al menos Apache y MySQL.
+
+Uso: Una vez instalado, abre el XAMPP Control Panel y haz clic en "Start" para los módulos de Apache y MySQL.
+
+Node.js:
+
+Instalación: Descarga la versión LTS (Long Term Support) desde nodejs.org. Esto instalará también npm (Node Package Manager).
+
+B. Preparación del Proyecto
+Clonar el repositorio:
+
+git clone https://github.com/carlosmunguia244/kosmos-logistica.git
 cd kosmos-logistica
-npm install
+Instalar dependencias del proyecto:
+Abre la terminal integrada en VS Code (Ctrl + Ñ) y escribe:
 
-2. Configurar Entorno
-Crea un archivo .env en la raíz del proyecto:
+npm install
+Esto descargará express, mysql2 y dotenv automáticamente.
+
+C. Configuración de Base de Datos
+Abre el panel de control de XAMPP y presiona el botón "Admin" junto al módulo MySQL. Esto abrirá phpMyAdmin en tu navegador.
+
+Crea una nueva base de datos llamada kosmos_logistica.
+
+Selecciona la base de datos, ve a la pestaña "Importar", sube el archivo database/init.sql que se encuentra en la carpeta del repositorio y ejecuta la importación.
+
+D. Variables de Entorno
+Crea un archivo llamado .env en la raíz del proyecto y agrega tus configuraciones:
 
 Fragmento de código
 PORT=3000
@@ -44,50 +83,5 @@ DB_HOST=127.0.0.1
 DB_USER=root
 DB_PASSWORD=
 DB_NAME=kosmos_logistica
-
-3. Base de Datos
-Ejecuta el script database/init.sql en tu gestor MySQL para crear las tablas relacionales y el usuario administrador de prueba (admin_kosmos / kosmos2026).
-
-4. Ejecutar
-
-Bash
-npm run dev
-La aplicación estará disponible en http://localhost:3000.
-
-Endpoints de la API
-Autenticación
-
-POST /api/auth/admin - Valida credenciales del administrador.
-
-POST /api/auth/chofer - Valida acceso del chofer vía licencia.
-
-Módulo de Choferes
-
-GET, POST, PUT, DELETE en /api/choferes
-
-Módulo de Vehículos
-
-GET, POST, PUT, DELETE en /api/vehiculos
-
-Módulo de Viajes (Despacho)
-
-GET /api/viajes - Obtiene bitácora completa cruzando datos con JOINs.
-
-POST, PUT, DELETE en /api/viajes - Gestión de rutas y actualización de estatus.
-
-GET /api/viajes/chofer/:id - Obtiene el historial específico de un chofer.
-
-Seguridad y Buenas Prácticas
-Integridad Relacional: Uso de Restricciones de Llave Foránea (ON DELETE RESTRICT) para evitar inconsistencias (ej. borrar un chofer que tiene un viaje en curso).
-
-Prevención SQL Injection: Uso estricto de consultas parametrizadas (?) en todas las interacciones con la base de datos.
-
-Validación de Datos: El backend rechaza peticiones incompletas (Código HTTP 400).
-
-Pool de Conexiones: Gestión eficiente de peticiones concurrentes a MySQL sin saturar el servidor.
-
-Optimización de APIs Externas: Implementación de temporizadores (setTimeout) en el frontend para evitar la saturación de llamadas a la API de mapas.
-
-Variables de Entorno: Aislamiento de credenciales mediante .env (excluido en .gitignore).
 
 Autor: Carlos Munguia - Prueba Técnica KOSMOS GPS
