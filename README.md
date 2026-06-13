@@ -2,7 +2,6 @@
 
 Sistema de administración integral diseñado para optimizar el control operativo de flotas vehiculares. La plataforma permite la gestión centralizada de choferes, parque vehicular y la programación de viajes, garantizando la trazabilidad operativa mediante una arquitectura robusta y segura.
 
-Problema que resuelve:
 El sistema resuelve la falta de control, la redundancia de datos y la descentralización operativa. Permite pasar de procesos manuales o desconectados a una plataforma única donde el administrador puede asignar recursos de manera eficiente, validar estados en tiempo real y auditar quién y cuándo se realizó cada movimiento logístico.
 
 Alcance:
@@ -33,10 +32,10 @@ Control de Versiones: Git para la gestión del historial de cambios y GitHub com
 Guía de Configuración e Instalación
 Para ejecutar este proyecto en un entorno local, sigue los pasos detallados a continuación:
 
-A. Herramientas de Desarrollo Requeridas
+Herramientas de Desarrollo Requeridas
 Visual Studio Code (VS Code):
 
-Instalación: Descárgalo desde code.visualstudio.com. Sigue el asistente de instalación estándar para tu sistema operativo.
+Instalación: Descárgalo desde https://code.visualstudio.com/download Sigue el asistente de instalación estándar para tu sistema operativo.
 
 Extensiones recomendadas:
 
@@ -48,15 +47,15 @@ Thunder Client: Útil para probar tus endpoints de API (GET, POST, etc.) antes d
 
 XAMPP:
 
-Instalación: Descárgalo desde apachefriends.org. Durante la instalación, asegúrate de marcar al menos Apache y MySQL.
+Instalación: Descárgalo desde https://www.apachefriends.org/ Durante la instalación, asegúrate de marcar al menos Apache y MySQL.
 
 Uso: Una vez instalado, abre el XAMPP Control Panel y haz clic en "Start" para los módulos de Apache y MySQL.
 
 Node.js:
 
-Instalación: Descarga la versión LTS (Long Term Support) desde nodejs.org. Esto instalará también npm (Node Package Manager).
+Instalación: Descarga la versión LTS (Long Term Support) desde https://nodejs.org./es/download Esto instalará también npm (Node Package Manager).
 
-B. Preparación del Proyecto
+Preparación del Proyecto
 Clonar el repositorio:
 
 git clone https://github.com/carlosmunguia244/kosmos-logistica.git
@@ -67,7 +66,8 @@ Abre la terminal integrada en VS Code (Ctrl + Ñ) y escribe:
 npm install
 Esto descargará express, mysql2 y dotenv automáticamente.
 
-C. Configuración de Base de Datos
+Configuración de Base de Datos
+
 Abre el panel de control de XAMPP y presiona el botón "Admin" junto al módulo MySQL para abrir phpMyAdmin (http://localhost/phpmyadmin) en tu navegador.
 
 Verifica si la base de datos kosmos_logistica ya aparece en el panel izquierdo:
@@ -82,7 +82,8 @@ Selecciónala en el panel izquierdo, haz clic en la pestaña "Importar" en la pa
 
 Selecciona el archivo database/init.sql incluido en la carpeta del repositorio y presiona el botón "Continuar" para cargar la estructura y tablas automáticamente.
 
-D. Variables de Entorno
+Variables de Entorno
+
 Crea un archivo llamado .env en la raíz del proyecto y agrega tus configuraciones:
 
 Fragmento de código
